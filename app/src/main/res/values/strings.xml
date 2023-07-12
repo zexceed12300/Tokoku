@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">TokoKu</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="login_msg1">Input tidak boleh kosong</string>
+    <string name="login_msg2">Username atau password salah</string>
+    <string name="hello_world">Hello World</string>
+    <string name="cari_item">Cari Item</string>
+    <string name="semua">Semua</string>
+    <string name="bayar_sekarang">Bayar Sekarang - $ %1$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_home">Home</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="harga">Harga</string>
+    <string name="nama">Nama</string>
+    <string name="qty">QTY</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="total_pembayaran">Total Pembayaran</string>
+    <string name="save">Save</string>
+    <string name="share">Share</string>
+    <string name="selesai">Selesai</string>
+    <string name="price">$ %1$s</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="invoice">Invoice</string>
+    <string name="password_confirm">Password tidak sama</string>
+</resources>
