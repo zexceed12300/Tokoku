@@ -49,9 +49,4 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
-
-    private fun obtainViewModel(mainActivity: MainActivity): HomeViewModel {
-        val factory = ViewModelFactory.getInstance(mainActivity.application)
-        return ViewModelProvider(mainActivity, factory)[HomeViewModel::class.java]
-    }
 }

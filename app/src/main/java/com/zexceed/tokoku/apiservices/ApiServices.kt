@@ -14,10 +14,15 @@ interface ApiServices {
         @Body loginRequest: LoginRequest
     ): Call<LoginResponse>
 
+//    @GET("products/search")
+//    fun getProducts(
+//        @Query("q") query: String
+//    ) : Call<ProductsResponse>
+
     @GET("products/search")
-    fun getProducts(
+    suspend fun getProducts(
         @Query("q") query: String
-    ) : Call<ProductsResponse>
+    ) : ProductsResponse
 
     @GET("users/{id}")
     fun getUser(

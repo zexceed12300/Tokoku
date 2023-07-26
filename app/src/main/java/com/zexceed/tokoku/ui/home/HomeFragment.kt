@@ -1,12 +1,14 @@
-package com.zexceed.tokoku.ui
+package com.zexceed.tokoku.ui.home
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -18,10 +20,15 @@ import com.zexceed.tokoku.databinding.FragmentHomeBinding
 import com.zexceed.tokoku.models.CartModels
 import com.zexceed.tokoku.models.remote.response.products.ProductsProductResponse
 import com.zexceed.tokoku.models.remote.response.products.ProductsResponse
+import com.zexceed.tokoku.repository.Resource
+import com.zexceed.tokoku.repository.TokokuRepository
+import com.zexceed.tokoku.ui.CartViewModel
+import com.zexceed.tokoku.ui.InvoiceActivity
 import com.zexceed.tokoku.ui.InvoiceActivity.Companion.TAG_INVOICE_CART
 import com.zexceed.tokoku.ui.InvoiceActivity.Companion.TAG_INVOICE_TOTALPRICE
 import com.zexceed.tokoku.util.AuthPreferences
 import com.zexceed.tokoku.util.Constants.API_BASE_URL
+import com.zexceed.tokoku.util.ViewModelFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,6 +38,7 @@ class HomeFragment : Fragment() {
     private lateinit var _binding: FragmentHomeBinding
     private val binding get() = _binding
     private lateinit var viewModel: CartViewModel
+    private lateinit var homeViewModel: HomeViewModel
     private lateinit var mAdapter: ProductAdapter
     private lateinit var preferences: AuthPreferences
     private var product: List<ProductsProductResponse> = listOf()
@@ -47,7 +55,13 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory()).get(CartViewModel::class.java)
+        val repository = TokokuRepository()
+        val factory = ViewModelFactory.getInstance(repository)
+
+        viewModel = ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory()).get(
+            CartViewModel::class.java)
+
+        homeViewModel = ViewModelProvider(requireActivity(), factory)[HomeViewModel::class.java]
 
         binding.apply {
             mAdapter = ProductAdapter(
@@ -99,27 +113,30 @@ class HomeFragment : Fragment() {
     }
 
     private fun setListProducts() {
-        val req = ApiConfig(API_BASE_URL).apiService.getProducts(binding.etSearch.text.toString())
-        req.enqueue(object: Callback<ProductsResponse> {
-            override fun onResponse(
-                call: Call<ProductsResponse>,
-                response: Response<ProductsResponse>
-            ) {
-                product = response.body()!!.products
+        homeViewModel.products.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    binding.progressBar.isVisible = true
+                }
 
-                mAdapter.submitList(product)
-                binding.rvProduct.apply {
-                    adapter = mAdapter
-                    layoutManager = LinearLayoutManager(requireActivity())
-                    setHasFixedSize(true)
+                is Resource.Success -> {
+                    binding.progressBar.isVisible = false
+                    product = result.data.products
+
+                    mAdapter.submitList(product)
+                    binding.rvProduct.apply {
+                        adapter = mAdapter
+                        layoutManager = LinearLayoutManager(requireActivity())
+                        setHasFixedSize(true)
+                    }
+                }
+
+                is Resource.Error -> {
+                    binding.progressBar.isVisible = false
+                    Toast.makeText(requireActivity(), result.error, Toast.LENGTH_SHORT).show()
                 }
             }
-
-            override fun onFailure(call: Call<ProductsResponse>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-
-        })
+        }
     }
 
     fun Fragment.setActivityTitle(@StringRes id: Int) {
